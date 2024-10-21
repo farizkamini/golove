@@ -17,5 +17,6 @@ func New(DBPool *pgxpool.Pool) *Handlers {
 func (h *Handlers) Controller(r chi.Router) {
 	r.Route("/trys", func(r chi.Router) {
 		r.Get("/", h.Find)
+		r.Post("/create", h.Create)
 	})
 }

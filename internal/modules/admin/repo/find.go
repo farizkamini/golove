@@ -15,7 +15,7 @@ type Res struct {
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }
 
-func (r *Read) Try(ctx context.Context) ([]Res, error) {
+func (r *Read) Find(ctx context.Context) ([]Res, error) {
 	q := `
 	select * from try
 	`

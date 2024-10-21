@@ -23,7 +23,7 @@ func main() {
 		log.Fatal(err)
 	}
 	defer DB.Close()
-	server.CreateLogFile()
+
 	vipp, errVip := vip.New().App()
 	if errVip != nil {
 		zlog.Fatal(errVip)
@@ -39,8 +39,6 @@ func main() {
 	}()
 
 	server.CreateDirAssets()
-	ctx = context.Background()
-	_, err = db.New(ctx).Conn()
 	if err != nil {
 		zlog.Fatal(err)
 		return
