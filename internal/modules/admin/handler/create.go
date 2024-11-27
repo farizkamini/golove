@@ -9,7 +9,7 @@ import (
 )
 
 func (h *Handlers) Create(w http.ResponseWriter, r *http.Request) {
-	err, stat := service_admin_auth.New(r.Context()).Create(h.DBPool, r)
+	err, stat := service_admin_auth.New(r.Context()).Create(h.DB, r)
 	if err != nil {
 		zlog.Error(err)
 		resp.Error(err, stat, w)

@@ -8,6 +8,6 @@ import (
 
 func Controller(r chi.Router, DB *pgxpool.Pool) {
 	r.Route("/admin", func(r chi.Router) {
-		handler_admin_brand.New(DB).Controller(r)
+		handler_admin_brand.Controller(r, DB)
 	})
 }

@@ -13,7 +13,7 @@ import (
 func (h *Handlers) Find(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 60*time.Second)
 	defer cancel()
-	res, err, stat := service_admin_auth.New(ctx).Find(h.DBPool, r)
+	res, err, stat := service_admin_auth.New(ctx).Find(h.DB, r)
 	if err != nil {
 		zlog.Error(err)
 		resp.Error(err, stat, w)

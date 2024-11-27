@@ -6,15 +6,16 @@ import (
 )
 
 type Handlers struct {
-	DBPool *pgxpool.Pool
+	DB *pgxpool.Pool
 }
 
-func New(DBPool *pgxpool.Pool) *Handlers {
+func New(db *pgxpool.Pool) *Handlers {
 	return &Handlers{
-		DBPool: DBPool,
+		DB: db,
 	}
 }
-func (h *Handlers) Controller(r chi.Router) {
+func Controller(r chi.Router, db *pgxpool.Pool) {
+	h := New(db)
 	r.Route("/trys", func(r chi.Router) {
 		r.Get("/", h.Find)
 		r.Post("/create", h.Create)

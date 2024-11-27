@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"strconv"
 	"time"
@@ -30,12 +31,6 @@ var (
 	ErrNoAffected   = errors.New(" | error no row err no affected")
 	ErrUserNotFound = errors.New(" | error user not found")
 )
-
-type DbService struct {
-	DB  *pgxpool.Pool
-	TX  pgx.Tx
-	Err error
-}
 
 type PgConfig struct {
 	Ctx context.Context
@@ -68,16 +63,28 @@ func (p *PgConfig) Conn() (*pgxpool.Pool, error) {
 	}
 
 	config.MaxConns = int32(vipConf.DbMaxCon)
-	config.MaxConnLifetime = time.Duration(vipConf.DbMaxLifetime)
+	// config.MinConns = 20
+	config.MaxConnLifetime = time.Duration(vipConf.DbMaxLifetime) * time.Minute
+	// config.HealthCheckPeriod = 1 * time.Minute
+	config.MaxConnIdleTime = 30 * time.Minute
+	// config.ConnConfig.ConnectTimeout = 5 * time.Second
 
 	pool, errPool := pgxpool.NewWithConfig(ctx, config)
 	if errPool != nil {
 		zlog.Error(err)
 		newErr = errPool
 	}
+
+	acquire, err := pool.Acquire(p.Ctx)
+	if err != nil {
+		zlog.Error(err)
+		return nil, err
+	}
+	defer acquire.Release()
+
 	_, errConnect := pool.Exec(ctx, ";")
 	if errConnect != nil {
-		zlog.Error(fmt.Errorf("cannot connect db: %v", err))
+		log.Fatal(errConnect)
 		newErr = errConnect
 	}
 	return pool, newErr

@@ -3,13 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-
-	"log"
+	"time"
 
 	"net/http"
 	"strconv"
 
-	"github.com/farizkamini/golove/config/db"
 	"github.com/farizkamini/golove/config/server"
 	"github.com/farizkamini/golove/config/serverstatic"
 	"github.com/farizkamini/golove/pkg/vip"
@@ -17,12 +15,8 @@ import (
 )
 
 func main() {
-	ctx := context.Background()
-	DB, err := db.New(ctx).Conn()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer DB.Close()
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	defer cancel()
 
 	vipp, errVip := vip.New().App()
 	if errVip != nil {
@@ -39,9 +33,9 @@ func main() {
 	}()
 
 	server.CreateDirAssets()
+	err := server.New().Serve(ctx)
 	if err != nil {
 		zlog.Fatal(err)
 		return
 	}
-	server.New(DB).Serve()
 }

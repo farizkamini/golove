@@ -7,8 +7,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func (s *Service) Find(DBPool *pgxpool.Pool, r *http.Request) ([]repo_admin_auth.Res, error, int) {
-	res, err := repo_admin_auth.NewRead(DBPool).Find(s.Ctx)
+func (s *Service) Find(DB *pgxpool.Pool, r *http.Request) ([]repo_admin_auth.Res, error, int) {
+	res, err := repo_admin_auth.NewRead(DB).Find(s.Ctx)
 	if err != nil {
 		return nil, err, http.StatusInternalServerError
 	}
